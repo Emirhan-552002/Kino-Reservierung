@@ -1,0 +1,18 @@
+[
+  { "id": 1, "titel": "Odyssee", "genre": "Historie", "dauer": 220, "fsk": 16, "preis": 11.50,
+    "vorstellungen": [
+      { "id": "1-1", "zeit": "17:30", "saal": "Saal 1", "belegt": ["C5", "C6", "D4", "D5", "E7"] },
+      { "id": "1-2", "zeit": "20:15", "saal": "Saal 1", "belegt": ["A1", "A2", "D5", "D6", "D7", "E5", "E6", "F1"] }
+    ] },
+  { "id": 2, "titel": "Spieder-Man", "genre": "Action", "dauer": 138, "fsk": 12, "preis": 13.00,
+    "vorstellungen": [
+      { "id": "2-1", "zeit": "16:00", "saal": "Saal 2", "belegt": ["B3", "B4"] },
+      { "id": "2-2", "zeit": "19:45", "saal": "Saal 2", "belegt": ["C4", "C5", "C6", "C7", "D3", "D8", "E4", "E5"] }
+    ] },
+  { "id": 3, "titel": "Interstellar", "genre": "Thriller", "dauer": 169, "fsk": 12, "preis": 13.00,
+    "vorstellungen": [
+      { "id": "3-1", "zeit": "15:00", "saal": "Saal 3", "belegt": ["A5", "A6", "B5"] },
+      { "id": "3-2", "zeit": "18:00", "saal": "Saal 3", "belegt": ["D1", "D2", "D3"] }
+    ] }
+  
+]

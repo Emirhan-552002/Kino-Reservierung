@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kino Reservierung</title>
+  <style>
+    :root { --bg: #1c2038; --karte: #272c4a; --text: #eef0f7; --blass: #a9aecb; --gold: #f2b134; --frei: #cfd5e8; --belegt: #4a5070; }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 1.5rem; background: var(--bg); color: var(--text); }
+    main { max-width: 900px; margin: 0 auto; }
+    h1 { margin: 0 0 1.5rem; }
+    h2 { margin: 0 0 1rem; font-size: 1.3rem; }
+    p { margin: .3rem 0; }
+
+    #filmliste { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
+    .film { background: var(--karte); padding: 1rem; border-radius: 6px; }
+    .film h3 { margin: 0 0 .4rem; }
+    .info { color: var(--blass); }
+    .zeiten { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .8rem; }
+    .zeit { display: flex; flex-direction: column; align-items: flex-start; gap: .1rem; background: transparent; color: var(--text); border: 2px solid var(--gold); padding: .4rem .7rem; }
+    .zeit span { font-size: .8rem; color: var(--blass); }
+    .zeit:hover { background: rgba(242, 177, 52, .15); }
+
+    .leinwand { height: 10px; border-radius: 50% 50% 0 0 / 100% 100% 0 0; background: var(--frei); margin: 1rem auto .4rem; width: 80%; box-shadow: 0 6px 24px rgba(207, 213, 232, .35); }
+    .leinwand-text { text-align: center; color: var(--blass); font-size: .8rem; margin-bottom: 1.5rem; }
+    #saal { overflow-x: auto; padding-bottom: .5rem; }
+    .reihe { display: flex; align-items: center; justify-content: center; gap: .35rem; margin-bottom: .35rem; min-width: max-content; }
+    .reihe-name { width: 1.5rem; color: var(--blass); font-weight: bold; }
+    .gang { width: 1.5rem; }
+    .sitz { width: 2.2rem; height: 2rem; padding: 0; border: none; border-radius: 6px 6px 3px 3px; background: var(--frei); color: #1c2038; font-size: .75rem; cursor: pointer; }
+    .sitz:hover { outline: 2px solid var(--gold); }
+    .sitz.gewaehlt { background: var(--gold); font-weight: bold; }
+    .sitz.belegt { background: var(--belegt); color: #6d7394; cursor: not-allowed; }
+    .sitz.belegt:hover { outline: none; }
+    .legende { display: flex; gap: 1.2rem; justify-content: center; margin: 1rem 0; font-size: .85rem; color: var(--blass); }
+    .legende span::before { content: ""; display: inline-block; width: .9rem; height: .9rem; border-radius: 3px; margin-right: .35rem; vertical-align: -2px; }
+    .l-frei::before { background: var(--frei); }
+    .l-gewaehlt::before { background: var(--gold); }
+    .l-belegt::before { background: var(--belegt); }
+    #auswahl-text { text-align: center; margin: 1rem 0; }
+
+    .box { background: var(--karte); padding: 1.2rem; border-radius: 6px; max-width: 460px; }
+    label { display: block; margin: 1rem 0 .3rem; }
+    input { width: 100%; padding: .55rem; border-radius: 4px; border: 1px solid var(--belegt); font: inherit; }
+
+    button, .knopf { font: inherit; border-radius: 4px; cursor: pointer; }
+    .aktionen { display: flex; gap: .6rem; margin-top: 1.2rem; flex-wrap: wrap; }
+    .primaer { background: var(--gold); color: #1c2038; border: 2px solid var(--gold); padding: .55rem 1rem; font-weight: bold; text-decoration: none; display: inline-block; }
+    .primaer:disabled { opacity: .4; cursor: not-allowed; }
+    .sekundaer { background: transparent; color: var(--text); border: 2px solid var(--blass); padding: .55rem 1rem; }
+    button:focus-visible, a:focus-visible { outline: 3px solid var(--text); outline-offset: 2px; }
+    .hinweis { color: var(--blass); font-size: .85rem; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Kino Reservierung</h1>
+
+  <!-- Schritt 1: Film wählen -->
+  <section id="schritt-film" class="schritt">
+    <h2>1. Film und Vorstellung wählen</h2>
+    <div id="filmliste">Filme werden geladen …</div>
+  </section>
+
+  <!-- Schritt 2: Plätze wählen -->
+  <section id="schritt-plaetze" class="schritt" hidden>
+    <h2>2. Plätze wählen</h2>
+    <p id="saal-titel" class="info"></p>
+    <div class="leinwand"></div>
+    <p class="leinwand-text">Leinwand</p>
+    <div id="saal"></div>
+    <div class="legende">
+      <span class="l-frei">Frei</span>
+      <span class="l-gewaehlt">Deine Auswahl</span>
+      <span class="l-belegt">Belegt</span>
+    </div>
+    <p id="auswahl-text"></p>
+    <div class="aktionen" style="justify-content:center">
+      <button id="zurueck-film" class="sekundaer">Anderer Film</button>
+      <button id="weiter-plaetze" class="primaer" disabled>Plätze bestätigen</button>
+    </div>
+  </section>
+
+  <!-- Schritt 3: Daten eingeben -->
+  <section id="schritt-daten" class="schritt" hidden>
+    <h2>3. Deine Daten</h2>
+    <div class="box">
+      <div id="zusammenfassung"></div>
+      <form id="buchungsformular">
+        <label for="name">Name</label>
+        <input id="name" required autocomplete="name">
+        <label for="email">E-Mail für die Bestätigung</label>
+        <input id="email" type="email" required autocomplete="email">
+        <div class="aktionen">
+          <button type="button" id="zurueck-plaetze" class="sekundaer">Plätze ändern</button>
+          <button type="submit" class="primaer">Buchung abschließen</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Schritt 4: Bestätigung -->
+  <section id="schritt-bestaetigung" class="schritt" hidden>
+    <h2>4. Buchung bestätigt</h2>
+    <div class="box">
+      <div id="bestaetigung-text"></div>
+      <div class="aktionen">
+        <a id="mail-link" class="knopf primaer" href="#">Bestätigung per Mail senden</a>
+        <button id="neue-buchung" class="sekundaer">Neue Buchung</button>
+      </div>
+      <p class="hinweis">Öffnet dein Mailprogramm mit der fertigen Bestätigung.</p>
+    </div>
+  </section>
+</main>
+<script src="kino.js"></script>
+</body>
+</html>
